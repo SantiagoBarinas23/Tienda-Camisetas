@@ -99,17 +99,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="login-footer">
                 <p>¿No tienes cuenta? <a href="../register/register.php">Regístrate aquí</a></p>
             </div>
-            
-            <div class="demo-users">
-                <p class="demo-title">👤 Usuarios de prueba:</p>
-                <div class="demo-user">
-                    <strong>Admin:</strong> admin@camisetasfutbol.com / admin123
-                </div>
-                <div class="demo-user">
-                    <strong>Cliente:</strong> juan@email.com / cliente123
-                </div>
-            </div>
-        </div>
     </div>
 
     <script src="login.js"></script>
