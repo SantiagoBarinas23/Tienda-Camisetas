@@ -41,20 +41,18 @@ function updateOrderStatus(orderId, newStatus) {
 
 // Ver detalles de pedido
 function viewOrder(orderId) {
-    // Aquí puedes implementar un modal o redirigir a una página de detalles
     showNotification('Ver pedido #' + orderId);
-    // window.location.href = 'ver_pedido.php?id=' + orderId;
+    // Aquí puedes implementar un modal o redirigir
 }
 
-// Productos
+// Productos - REDIRIGIR A PÁGINA DE EDICIÓN
+function editProduct(productId) {
+    window.location.href = 'editar_producto.php?id=' + productId;
+}
+
 function showAddProductModal() {
     showNotification('Función de agregar producto en desarrollo');
-    // Aquí implementarías un modal para agregar productos
-}
-
-function editProduct(productId) {
-    showNotification('Editar producto #' + productId);
-    // window.location.href = 'editar_producto.php?id=' + productId;
+    // Aquí implementarías un modal o redirección para agregar productos
 }
 
 function deleteProduct(productId) {
@@ -87,6 +85,7 @@ function deleteProduct(productId) {
 // Usuarios
 function editUser(userId) {
     showNotification('Editar usuario #' + userId);
+    // Aquí implementarías edición de usuarios
 }
 
 function toggleUserStatus(userId) {
@@ -150,7 +149,7 @@ function deleteCategory(categoryId) {
     if (!confirm('¿Eliminar esta categoría?')) {
         return;
     }
-    showNotification('Eliminar categoría #' + categoryId);
+    showNotification('Función en desarrollo');
 }
 
 // Equipos
@@ -189,7 +188,7 @@ function deleteTeam(teamId) {
     if (!confirm('¿Eliminar este equipo?')) {
         return;
     }
-    showNotification('Eliminar equipo #' + teamId);
+    showNotification('Función en desarrollo');
 }
 
 // Sistema de notificaciones

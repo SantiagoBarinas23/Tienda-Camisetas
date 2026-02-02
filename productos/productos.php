@@ -132,7 +132,7 @@ if (isLoggedIn()) {
                              onclick="changeImage(this.src)">
                         <?php if ($producto['imagen_2']): ?>
                             <img class="thumbnail" 
-                                 src="real.madrid.2025.webp<?php echo htmlspecialchars($producto['imagen_2']); ?>" 
+                                 src="../uploads/<?php echo htmlspecialchars($producto['imagen_2']); ?>" 
                                  onclick="changeImage(this.src)">
                         <?php endif; ?>
                         <?php if ($producto['imagen_3']): ?>

@@ -24,7 +24,7 @@ if ($producto_id <= 0) {
 
 if ($accion === 'agregar') {
     // Agregar a favoritos
-    $sql = "INSERT INTO favoritos (usuario_id, producto_id) VALUES ($usuario_id, $producto_id)";
+    $sql = "INSERT INTO Carrito (usuario_id, producto_id) VALUES ($usuario_id, $producto_id)";
     
     if ($conn->query($sql)) {
         echo json_encode(['success' => true, 'message' => 'Agregado a favoritos']);

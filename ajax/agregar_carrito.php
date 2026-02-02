@@ -5,44 +5,73 @@ header('Content-Type: application/json');
 
 if (!isLoggedIn()) {
     echo json_encode(['success' => false, 'message' => 'Debes iniciar sesión']);
-    exit();
+    exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'message' => 'Método no permitido']);
-    exit();
+    exit;
 }
 
 $usuario_id = $_SESSION['usuario_id'];
 $producto_id = isset($_POST['producto_id']) ? intval($_POST['producto_id']) : 0;
-$accion = isset($_POST['accion']) ? cleanInput($_POST['accion']) : 'agregar';
+$cantidad = isset($_POST['cantidad']) ? intval($_POST['cantidad']) : 1;
+$talla = isset($_POST['talla']) ? cleanInput($_POST['talla']) : 'M';
 
-if ($producto_id <= 0) {
-    echo json_encode(['success' => false, 'message' => 'Producto inválido']);
-    exit();
+if ($producto_id <= 0 || $cantidad <= 0) {
+    echo json_encode(['success' => false, 'message' => 'Datos inválidos']);
+    exit;
 }
 
-if ($accion === 'agregar') {
-    // Agregar a favoritos
-    $sql = "INSERT INTO favoritos (usuario_id, producto_id) VALUES ($usuario_id, $producto_id)";
+// Verificar que el producto existe y tiene stock
+$sql_producto = "SELECT stock FROM productos WHERE id = $producto_id AND activo = 1";
+$result = $conn->query($sql_producto);
+
+if ($result->num_rows === 0) {
+    echo json_encode(['success' => false, 'message' => 'Producto no encontrado']);
+    exit;
+}
+
+$producto = $result->fetch_assoc();
+
+if ($producto['stock'] < $cantidad) {
+    echo json_encode(['success' => false, 'message' => 'Stock insuficiente']);
+    exit;
+}
+
+// Verificar si el producto ya está en el carrito
+$sql_check = "SELECT id, cantidad FROM carrito 
+              WHERE usuario_id = $usuario_id 
+              AND producto_id = $producto_id 
+              AND talla = '$talla'";
+$result_check = $conn->query($sql_check);
+
+if ($result_check->num_rows > 0) {
+    // Actualizar cantidad
+    $row = $result_check->fetch_assoc();
+    $nueva_cantidad = $row['cantidad'] + $cantidad;
     
-    if ($conn->query($sql)) {
-        echo json_encode(['success' => true, 'message' => 'Agregado a favoritos']);
+    if ($nueva_cantidad > $producto['stock']) {
+        echo json_encode(['success' => false, 'message' => 'No hay suficiente stock']);
+        exit;
+    }
+    
+    $sql_update = "UPDATE carrito SET cantidad = $nueva_cantidad WHERE id = {$row['id']}";
+    
+    if ($conn->query($sql_update)) {
+        echo json_encode(['success' => true, 'message' => 'Cantidad actualizada en el carrito']);
     } else {
-        if ($conn->errno === 1062) { // Duplicate entry
-            echo json_encode(['success' => false, 'message' => 'Ya está en favoritos']);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Error al agregar']);
-        }
+        echo json_encode(['success' => false, 'message' => 'Error al actualizar']);
     }
 } else {
-    // Eliminar de favoritos
-    $sql = "DELETE FROM favoritos WHERE usuario_id = $usuario_id AND producto_id = $producto_id";
+    // Insertar nuevo item
+    $sql_insert = "INSERT INTO carrito (usuario_id, producto_id, cantidad, talla) 
+                   VALUES ($usuario_id, $producto_id, $cantidad, '$talla')";
     
-    if ($conn->query($sql)) {
-        echo json_encode(['success' => true, 'message' => 'Eliminado de favoritos']);
+    if ($conn->query($sql_insert)) {
+        echo json_encode(['success' => true, 'message' => 'Producto agregado al carrito']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Error al eliminar']);
+        echo json_encode(['success' => false, 'message' => 'Error al agregar producto']);
     }
 }
 ?>
